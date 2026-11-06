@@ -1,0 +1,23 @@
+# Logs and Dumps
+*.log
+*.dmp
+*.tmp
+*.bak
+
+# Windows System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# IDE / Editor Files
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# PowerShell Temporary Files
+*.ps1~
+test_sandbox/

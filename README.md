@@ -1,6 +1,7 @@
 # 🚀 Universal System & Multi-Drive Disk Cleaner & Deep Storage Analyzer
 
 [![PowerShell](https://img.shields.io/badge/PowerShell-5.1%20%7C%207%2B-blue.svg?logo=powershell)](https://microsoft.com/PowerShell)
+[![Tests](https://github.com/Manoj-2424150118/SystemDiskCleaner/actions/workflows/tests.yml/badge.svg)](https://github.com/Manoj-2424150118/SystemDiskCleaner/actions/workflows/tests.yml)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20%7C%20Server-0078D6.svg?logo=windows)](https://www.microsoft.com/windows)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-Yes-brightgreen.svg)]()

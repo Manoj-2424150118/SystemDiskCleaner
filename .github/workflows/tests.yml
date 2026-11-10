@@ -1,0 +1,23 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+    paths: ["SystemDiskCleaner.ps1", "tests/**", ".github/workflows/tests.yml"]
+  pull_request:
+    branches: [main]
+    paths: ["SystemDiskCleaner.ps1", "tests/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sandbox-tests:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run isolated sandbox tests
+        shell: powershell
+        run: .\tests\test_cleaner_sandbox.ps1

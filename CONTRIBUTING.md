@@ -47,8 +47,10 @@ the script), `-CustomDrives` (scan specific drives).
 
 ## Tests
 
-There is **no CI workflow on this repo** — the tests are Windows-only, so
-run them by hand on a Windows machine before opening a PR:
+CI runs the suite on every push/PR touching the script or tests
+(`.github/workflows/tests.yml`, `windows-latest`); the tests are
+Windows-only, so also run them by hand on a Windows machine before
+opening a PR:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\tests\test_cleaner_sandbox.ps1

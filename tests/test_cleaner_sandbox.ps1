@@ -3,6 +3,10 @@
 # ==========================================================
 $ErrorActionPreference = "Stop"
 
+# Any failed check sets this flag; the script exits 1 at the end so CI can go red.
+# (Previously every run printed success even when a check failed.)
+$failed = $false
+
 $scriptDir = Split-Path -Parent $PSScriptRoot
 $cleanerScript = Join-Path $scriptDir "SystemDiskCleaner.ps1"
 if (-not (Test-Path $cleanerScript)) {
@@ -63,7 +67,8 @@ try {
 if ($isLocked) {
     Write-Host "Confirmed: File is EXCLUSIVELY LOCKED by background process (PID: $($lockProcess.Id))." -ForegroundColor Green
 } else {
-    Write-Host "Warning: File lock could not be verified." -ForegroundColor Yellow
+    Write-Host "[TEST FAILED] File lock could not be verified." -ForegroundColor Red
+    $failed = $true
 }
 
 # 3. Source cleaner helper functions directly
@@ -80,6 +85,7 @@ if ($aiSize -gt 4MB -and $archiveSize -gt 9MB) {
     Write-Host "[TEST PASSED] Folder and File size calculations are exact." -ForegroundColor Green
 } else {
     Write-Host "[TEST FAILED] Size calculation mismatch!" -ForegroundColor Red
+    $failed = $true
 }
 
 # 4. Test Process Unlocking and Deletion
@@ -95,6 +101,10 @@ try {
     $normalDeleteFailed = $true
     Write-Host "Verified: Normal file deletion failed as expected due to process lock." -ForegroundColor Cyan
 }
+if (-not $normalDeleteFailed) {
+    Write-Host "[TEST FAILED] Normal deletion succeeded despite the lock — the lock was not actually held." -ForegroundColor Red
+    $failed = $true
+}
 
 # Now use Cleaner's Unlocker & Complete Deletion
 Write-Host "Executing Cleaner's Force Unlocker on process PID: $($lockProcess.Id)..." -ForegroundColor Yellow
@@ -107,6 +117,7 @@ if ($deleteResult -and -not (Test-Path $testLockedDir)) {
     Write-Host "[TEST PASSED] Locked folder & files were successfully unlocked and permanently deleted!" -ForegroundColor Green
 } else {
     Write-Host "[TEST FAILED] Could not delete locked directory." -ForegroundColor Red
+    $failed = $true
 }
 
 # 5. Test Deletion of Mock AI Models and Archive
@@ -121,6 +132,7 @@ if (-not $aiExists -and -not $archiveExists) {
     Write-Host "[TEST PASSED] AI Models and Large Archive deleted with ZERO traces remaining." -ForegroundColor Green
 } else {
     Write-Host "[TEST FAILED] Traces still exist on disk." -ForegroundColor Red
+    $failed = $true
 }
 
 # 6. Test Safety Filter (Ensure system roots can never be deleted)
@@ -130,10 +142,18 @@ if (-not $rootDeleteResult) {
     Write-Host "[TEST PASSED] System root protection properly blocked unauthorized deletion." -ForegroundColor Green
 } else {
     Write-Host "[TEST FAILED] System root was not blocked!" -ForegroundColor Red
+    $failed = $true
 }
 
 # Cleanup sandbox
 Remove-Item -LiteralPath $testSandbox -Recurse -Force -ErrorAction SilentlyContinue
+
+if ($failed) {
+    Write-Host "`n==========================================================" -ForegroundColor Red
+    Write-Host "   SANDBOX TESTS FAILED — see [TEST FAILED] above.       " -ForegroundColor Red
+    Write-Host "==========================================================" -ForegroundColor Red
+    exit 1
+}
 
 Write-Host "`n==========================================================" -ForegroundColor Green
 Write-Host "   ALL ISOLATED SANDBOX TESTS PASSED SUCCESSFULLY!        " -ForegroundColor Green

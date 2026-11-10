@@ -102,7 +102,7 @@ try {
     Write-Host "Verified: Normal file deletion failed as expected due to process lock." -ForegroundColor Cyan
 }
 if (-not $normalDeleteFailed) {
-    Write-Host "[TEST FAILED] Normal deletion succeeded despite the lock — the lock was not actually held." -ForegroundColor Red
+    Write-Host "[TEST FAILED] Normal deletion succeeded despite the lock - the lock was not actually held." -ForegroundColor Red
     $failed = $true
 }
 
@@ -150,7 +150,7 @@ Remove-Item -LiteralPath $testSandbox -Recurse -Force -ErrorAction SilentlyConti
 
 if ($failed) {
     Write-Host "`n==========================================================" -ForegroundColor Red
-    Write-Host "   SANDBOX TESTS FAILED — see [TEST FAILED] above.       " -ForegroundColor Red
+    Write-Host "   SANDBOX TESTS FAILED - see [TEST FAILED] above.       " -ForegroundColor Red
     Write-Host "==========================================================" -ForegroundColor Red
     exit 1
 }
